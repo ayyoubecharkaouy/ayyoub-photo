@@ -1,0 +1,29 @@
+# Environnements et caches Python/Jupyter
+.venv/
+.venv*/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Données, résultats et poids locaux
+data/archive/
+data/*.zip
+data/*.tar
+data/*.tar.gz
+data/hq/
+data/real_photos/
+datasets/
+artifacts/
+experiments/
+*.pth
+*.ckpt
+*.pt
+
+# Secrets locaux
+.aws/
+.codex/
+.agents/
+.env
+.env.*
+!.env.example
