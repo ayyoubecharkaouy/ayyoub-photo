@@ -1,0 +1,6 @@
+# Installer d'abord requirements-torch-cpu.txt pour éviter les dépendances CUDA.
+streamlit>=1.50,<2
+numpy>=1.26,<3
+-r requirements-data.txt
+scikit-image>=0.22,<1
+tqdm>=4.66,<5

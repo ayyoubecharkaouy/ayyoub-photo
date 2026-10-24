@@ -5,6 +5,8 @@ venv/
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
+.cache/
+.streamlit/secrets.toml
 
 # Données, résultats et poids locaux
 data/archive/
@@ -13,6 +15,14 @@ data/*.tar
 data/*.tar.gz
 data/hq/
 data/real_photos/
+data/.*.div2k.json
+data/.*.prepare.lock
+data/**/*.[pP][nN][gG]
+data/**/*.[jJ][pP][gG]
+data/**/*.[jJ][pP][eE][gG]
+data/**/*.zip
+data/**/*.ayyphoto-partial
+data/**/*.invalid_*
 datasets/
 artifacts/
 experiments/

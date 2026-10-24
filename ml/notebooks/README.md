@@ -1,5 +1,88 @@
 # Premier modèle AyyPhoto
 
+## Vérifier les images avant d'ajouter des données
+
+Ouvrir [03_ayyphoto_data_audit_kaggle.ipynb](03_ayyphoto_data_audit_kaggle.ipynb)
+et attacher le dataset avec **Add Input**. Aucun GPU ni PyTorch n'est requis.
+L'audit lit tous les pixels, cherche les doublons exacts et les ressemblances
+possibles, contrôle les dimensions et produit des planches de revue.
+Il ne supprime et ne modifie aucune image source.
+
+Les sorties sont sous `/kaggle/working/ayyphoto_data_audit`. Conserver
+`summary.json`, `sample.jpg`, `review_candidates.jpg` et les listes de doublons
+si elles ne sont pas vides. Les ressemblances et statistiques de contours ne
+constituent pas des décisions automatiques de suppression.
+
+L'outil peut aussi s'exécuter sur un dossier local d'images avec NumPy et Pillow :
+
+```bash
+python3 ml/data_audit.py --data-root /chemin/des/images --output /chemin/du/nouveau-rapport
+```
+
+Voir la [stratégie de données](../../docs/dataset_strategy.md) pour interpréter
+les résultats et décider s'il faut compléter ou remplacer la base.
+
+## Tester un modèle sauvegardé sans réentraîner
+
+Ouvrir [02_ayyphoto_inference_kaggle.ipynb](02_ayyphoto_inference_kaggle.ipynb).
+Attacher les sorties de l'entraînement et la photo à tester avec **Add Input**,
+puis renseigner `MODEL_PATH` et `PHOTO_PATH`. Une seule expérience peut être
+détectée automatiquement ; plusieurs expériences exigent un choix explicite.
+Le notebook accepte `model_bundle.pt`, les anciens `best_weights.pth`, `last.ckpt`
+et les archives `*_export.zip`. Il n'a besoin ni de DIV2K ni des cellules
+d'entraînement. Les images et rapports sont écrits dans
+`/kaggle/working/ayyphoto_tests`.
+
+## Variante Kaggle — sans Google Drive
+
+Si le calcul s'effectue sur Kaggle, ouvrir
+[01_ayyphoto_denoising_kaggle.ipynb](01_ayyphoto_denoising_kaggle.ipynb).
+Les variantes Colab ne doivent pas être utilisées sur Kaggle : la présence
+de `google.colab` parmi les bibliothèques n'y rend pas `drive.mount()` disponible.
+
+1. Importer cette variante dans Kaggle.
+2. Dans **Add Input**, attacher `soumikrakshit/div2k-high-resolution-images`.
+3. Sélectionner un GPU dans les options du notebook.
+4. Cliquer **Run All**. Le dossier DIV2K est détecté sous `/kaggle/input`, même
+   s'il se trouve dans une arborescence imbriquée. S'il n'est pas trouvé,
+   KaggleHub récupère le chemin de `soumikrakshit/div2k-high-resolution-images`.
+   En cas de plusieurs copies,
+   renseigner `DATA_ROOT` dans la configuration.
+
+Cette variante utilise les entrées Kaggle ou le chemin fourni par KaggleHub,
+sans copie du dataset ni montage Drive.
+`INSTALL_DEPENDENCIES = False` conserve les bibliothèques préinstallées ;
+activer cette option et Internet uniquement si une dépendance manque.
+L'entraînement est activé et le test final reste désactivé.
+
+Les résultats sont écrits dans `/kaggle/working/ayyphoto/experiments`.
+Un ZIP contenant les poids, la configuration et les métriques est actualisé
+après chaque époque complète par défaut. `model_bundle.pt` permet l'inférence
+sans le dossier d'expérience complet. Enregistrer une version avec ses sorties
+ou télécharger l'archive avant de quitter : ces exports ne rendent pas la
+session persistante à eux seuls.
+
+Pour reprendre un checkpoint ajouté comme entrée Kaggle, renseigner
+`RESUME_RUN_DIR` avec le dossier d'expérience contenant `config.json`,
+`best_weights.pth` et `last.ckpt`. Les artefacts sont copiés automatiquement
+vers un nouveau dossier de sortie accessible en écriture. Le dataset n'est
+pas recopié. Mettre `RUN_TRAINING = False` pour charger sans continuer
+l'entraînement. Une interruption volontaire garde `interrupted_weights.pth`
+pour l'inférence ou un futur fine-tuning ; la reprise de l'état d'entraînement
+se fait avec `last.ckpt`, à la dernière époque complète.
+
+`RGB_CACHE_MIB` borne un cache RGB uint8 pour éviter certains redécodages. Les
+recadrages sont convertis en flottants après leur extraction. Les paires et
+bruits restent identiques à l'ancien pipeline. La validation journalise la L1
+brute et écrêtée séparément. Les tests finaux sont associés aux empreintes des
+poids et du protocole ; un ancien rapport sans ces empreintes n'est pas
+automatiquement attribué au modèle courant.
+
+Voir l'[analyse du pipeline](../../docs/kaggle_review.md) pour les limites de
+validation et les prochaines expériences.
+
+Voir la [documentation Kaggle](https://www.kaggle.com/docs/notebooks).
+
 ## Variante pour un dataset déjà présent sur Drive
 
 Ouvrir [01_ayyphoto_denoising_drive.ipynb](01_ayyphoto_denoising_drive.ipynb)

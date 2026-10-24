@@ -1,5 +1,45 @@
 # Données pour le notebook AyyPhoto
 
+## Préparation automatique sur le PC
+
+Dans Streamlit, ouvrir **Entraîner le modèle**, garder **DIV2K automatique**
+puis lancer l'entraînement. La préparation se fait automatiquement avant le
+calcul. Pour préparer uniquement les images, utiliser l'onglet
+**Préparer les données** et cliquer sur **Préparer les données DIV2K**.
+
+Les 900 images DIV2K sont installées dans `data/archive`. Si elles sont déjà
+présentes et valides, aucun appel Kaggle n'est effectué. Les fichiers manquants
+ou corrompus sont récupérés ; les fichiers corrompus remplacés restent
+sauvegardés avec un suffixe non reconnu comme image par le chargeur.
+La préparation est aussi accessible dans l'onglet Streamlit **Préparer les données**.
+
+Le script enregistre les empreintes et le résultat de vérification dans
+`data/.archive.div2k.json`. Il ne remplace pas l'audit des doublons, la revue
+des scènes ni une vérification indépendante de la provenance des images.
+Les 100 images de test interne proviennent de la validation publique DIV2K.
+
+## Audit avant un nouvel entraînement
+
+Utiliser [03_ayyphoto_data_audit_kaggle.ipynb](../ml/notebooks/03_ayyphoto_data_audit_kaggle.ipynb)
+sur le dataset réellement accessible. Il vérifie l'intégrité, les dimensions,
+les doublons exacts et des candidats de similarité, sans modifier les sources.
+La [stratégie de données](../docs/dataset_strategy.md) précise les limites de
+cet audit et pourquoi des paires réelles de smartphone peuvent être plus utiles
+qu'un simple accroissement du nombre d'images propres.
+
+Les observations historiques ci-dessous décrivent l'ancienne copie locale ;
+elles ne remplacent pas un audit de la copie actuellement utilisée sur Kaggle.
+
+## Sur Kaggle
+
+Utiliser [01_ayyphoto_denoising_kaggle.ipynb](../ml/notebooks/01_ayyphoto_denoising_kaggle.ipynb)
+et attacher `soumikrakshit/div2k-high-resolution-images` avec **Add Input**.
+Le notebook recherche les dossiers `DIV2K_train_HR` et `DIV2K_valid_HR`
+sous `/kaggle/input`, puis lit directement les images. Il ne télécharge et
+ne copie pas le dataset, et n'utilise pas de montage Google Drive.
+Les fichiers d'entrée restent inchangés ; les poids et rapports sont écrits
+sous `/kaggle/working/ayyphoto/experiments`.
+
 ## Dataset déjà enregistré sur Drive
 
 Utiliser [01_ayyphoto_denoising_drive.ipynb](../ml/notebooks/01_ayyphoto_denoising_drive.ipynb)
